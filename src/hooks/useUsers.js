@@ -10,7 +10,7 @@ export const useUser = create(
       loginVisible: false,
       registerVisible: false,
       loading: false,
-      selectedUser: null, // 👉 сюда будем сохранять автора
+      selectedUser: null,
 
       setLoginVisible: (visible) => set({ loginVisible: visible }),
       setRegisterVisible: (visible) => set({ registerVisible: visible }),
@@ -70,7 +70,18 @@ export const useUser = create(
           set({ selectedUser: null });
           return null;
         }
-      }
+      },
+      fetchUserByLogin: async (login) => {
+        try {
+          const data = await apiService.getUserByLogin(login);
+          set({ selectedUser: data });
+          return data;
+        } catch (error) {
+          console.error("Fetch user by login error:", error);
+          set({ selectedUser: null });
+          return null;
+        }
+      },
     }),
     {
       name: "user-storage",

@@ -147,18 +147,19 @@ const TripDetails = () => {
               <Space>
                 <Avatar>{selectedUser.login?.[0]?.toUpperCase()}</Avatar>
                 <Text>{selectedUser.login}</Text>
-                {/* <Button
+                <Button
                   type="link"
-                  onClick={() => navigate(`/users/${currentTrip.userId}`)}
+                  onClick={() => navigate(`/user/${selectedUser.login}`)} // ✅ теперь по login
                   style={{ padding: 0 }}
                 >
                   View Profile
-                </Button> */}
+                </Button>
               </Space>
             ) : (
               <Tag color="blue">User {currentTrip.userId}</Tag>
             )}
-            {user?.userId === currentTrip.userId && (
+
+            {user?.login === selectedUser?.login && ( // ✅ сверяем логины
               <Tag color="green" style={{ marginLeft: "8px" }}>
                 You
               </Tag>

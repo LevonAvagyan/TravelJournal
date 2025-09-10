@@ -40,7 +40,7 @@ export default function MyJournal() {
           style={{ display: "flex", justifyContent: "center", marginTop: 50 }}
         >
           <Spin size="large">
-            <br/>
+            <br />
             <div style={{ padding: "50px" }}>Loading your trips...</div>
           </Spin>
         </div>
@@ -55,20 +55,16 @@ export default function MyJournal() {
           }}
         >
           <Title level={4} style={{ color: "#8c8c8c" }}>
-            📝 No trips yet
+            📝 No trips yet 
           </Title>
           <Text type="secondary" style={{ display: "block", marginBottom: 20 }}>
             Start your travel journey by adding your first trip!
           </Text>
-          <Button
-            type="primary"
-            size="large"
-            onClick={openAddTripModal} 
-          >
+          <Button type="primary" size="large" onClick={openAddTripModal}>
             Create Your First Trip
           </Button>
 
-          <AddTripModal visible={addTripVisible} onClose={closeAddTripModal} />
+          <AddTripModal open={addTripVisible} onClose={closeAddTripModal} />
         </div>
       ) : (
         <>

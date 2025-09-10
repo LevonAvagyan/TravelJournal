@@ -59,20 +59,27 @@ export const NAVIGATION = {
       isAction: true,
     },
   ],
+  dynamic: [
+    {
+      key: "trip-details",
+      label: "Trip Details",
+      path: "/trip/:id",
+      isProtected: false, 
+    },
+    {
+      key: "user-trips",
+      label: "User Trips",
+      path: "/user/:login",
+      isProtected: false,
+    },
+  ],
 };
 
-// Добавляем функцию для получения маршрутов
 export const getRoutesConfig = () => {
   return {
     public: NAVIGATION.public.filter((item) => item.path),
     private: NAVIGATION.private.filter((item) => item.path),
-    dynamic: [
-      {
-        key: "trip-details",
-        path: "/trip/:id",
-        isProtected: false, // или true, если хотите защитить
-      },
-    ],
+    dynamic: NAVIGATION.dynamic.filter((item) => item.path),
   };
 };
 

@@ -9,6 +9,7 @@ const Home = lazy(() => import("./pages/Home"));
 const Explore = lazy(() => import("./pages/Explore"));
 const MyJournal = lazy(() => import("./pages/MyJournal"));
 const TripDetails = lazy(() => import("./pages/TripDetails")); 
+const UserTrips = lazy(() => import("./pages/UserTrips"));
 
 function App() {
   const routesConfig = getRoutesConfig();
@@ -57,7 +58,6 @@ function App() {
                 }
               />
             ))}
-
             {/* Приватные маршруты */}
             {routesConfig.private.map((route) => (
               <Route
@@ -70,20 +70,17 @@ function App() {
                 }
               />
             ))}
-
             {/* Динамические маршруты */}
             {routesConfig.dynamic.map((route) => (
               <Route
                 key={route.key}
                 path={route.path}
                 element={
-                  route.isProtected ? (
-                    <ProtectedRoute>
-                      <TripDetails />
-                    </ProtectedRoute>
-                  ) : (
+                  route.key === "trip-details" ? (
                     <TripDetails />
-                  )
+                  ) : route.key === "user-trips" ? (
+                    <UserTrips />
+                  ) : null
                 }
               />
             ))}

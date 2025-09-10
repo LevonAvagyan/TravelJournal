@@ -57,8 +57,14 @@ class ApiService {
       if (userExists) {
         throw new Error("User with this login already exists");
       }
+      const maxUserId =
+        allUsers.length > 0
+          ? Math.max(...allUsers.map((user) => user.userId || 0))
+          : 0;
+      const newUserId = maxUserId + 1;
 
       const newUser = {
+        userId: newUserId,
         login: loginInput,
         password: password,
         createdAt: new Date().toISOString(),
@@ -82,6 +88,21 @@ class ApiService {
       );
     } catch (error) {
       console.error("Get user by userId error:", error);
+      throw error;
+    }
+  }
+
+  async getUserByLogin(login) {
+    try {
+      const res = await axios.get(this.USERS_URL);
+      const allUsers = res.data;
+      return (
+        allUsers.find(
+          (user) => user.login.toLowerCase() === login.toLowerCase()
+        ) || null
+      );
+    } catch (error) {
+      console.error("Get user by login error:", error);
       throw error;
     }
   }
