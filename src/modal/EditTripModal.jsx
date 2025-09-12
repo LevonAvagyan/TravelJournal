@@ -1,26 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Form, Input, DatePicker, Button } from "antd";
+import ImageUpload from "../components/ImageUpload";
 import { useTrips } from "../hooks/useTrips";
-import { useUser } from "../hooks/useUsers";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 
-export default function AddTripModal({ open, onClose }) {
-  const user = useUser((state) => state.user);
-  const { handleSubmit, handleLoading } = useTrips((state) => state);
+export default function EditTripModal({ open, onClose, trip }) {
+  const { editTrip, handleLoading } = useTrips((state) => state);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (trip) {
+      form.setFieldsValue({
+        title: trip.title,
+        location: trip.location,
+        date: trip.date ? dayjs(trip.date) : dayjs(),
+        image: trip.image,
+        description: trip.description,
+      });
+    }
+  }, [trip, form]);
 
   const onFinish = async (values) => {
     try {
-      await handleSubmit(values, user?.userId, form, onClose);
-      } catch (error) {
-      toast.error("Failed to add trip");
+      const editedTrip = {
+        ...trip,
+        ...values,
+        date: values.date ? values.date.toISOString() : trip.date,
+      };
+      await editTrip(trip.id, editedTrip);
+      toast.success("Trip updated successfully!");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update trip");
     }
   };
 
   return (
     <Modal
-      title="Add New Trip"
+      title="Edit Trip"
       open={open}
       onCancel={onClose}
       footer={null}
@@ -57,11 +75,11 @@ export default function AddTripModal({ open, onClose }) {
         </Form.Item>
 
         <Form.Item
-          label="Image URL"
+          label="Image"
           name="image"
-          rules={[{ required: true, message: "Enter image URL" }]}
+          rules={[{ required: true, message: "Please upload an image" }]}
         >
-          <Input placeholder="https://example.com/photo.jpg" />
+          <ImageUpload />
         </Form.Item>
 
         <Form.Item
@@ -82,7 +100,7 @@ export default function AddTripModal({ open, onClose }) {
             block
             loading={handleLoading}
           >
-            Add Trip
+            Save Changes
           </Button>
         </Form.Item>
       </Form>

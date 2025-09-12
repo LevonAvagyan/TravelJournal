@@ -5,7 +5,20 @@ import {
   PlusOutlined,
   LoginOutlined,
   LogoutOutlined,
+  UserOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
+import { Navigate } from "react-router-dom";
+import React from "react";
+
+// Ленивая загрузка компонентов
+const Home = React.lazy(() => import("../pages/Home"));
+const Explore = React.lazy(() => import("../pages/Explore"));
+const MyJournal = React.lazy(() => import("../pages/MyJournal"));
+const TripDetails = React.lazy(() => import("../pages/TripDetails"));
+const UserTrips = React.lazy(() => import("../pages/UserTrips"));
+const Users = React.lazy(() => import("../pages/Users"));
+const SettingsPage = React.lazy(() => import("../pages/SettingsPage"));
 
 export const NAVIGATION = {
   public: [
@@ -14,6 +27,7 @@ export const NAVIGATION = {
       icon: <HomeOutlined />,
       label: "Home",
       path: "/",
+      component: <Home />,
       visible: true,
     },
     {
@@ -21,7 +35,16 @@ export const NAVIGATION = {
       icon: <CompassOutlined />,
       label: "Explore",
       path: "/explore",
+      component: <Explore />,
       visible: true,
+    },
+    {
+      key: "users",
+      label: "Users",
+      path: "/users",
+      component: <Users />,
+      visible: true,
+      icon: <UserOutlined />,
     },
   ],
   private: [
@@ -30,6 +53,15 @@ export const NAVIGATION = {
       icon: <BookOutlined />,
       label: "My Journal",
       path: "/my-journal",
+      component: <MyJournal />,
+      visible: true,
+    },
+    {
+      key: "settings",
+      icon: <SettingOutlined />,
+      label: "Settings",
+      path: "/settings",
+      component: <SettingsPage />,
       visible: true,
     },
     {
@@ -64,15 +96,22 @@ export const NAVIGATION = {
       key: "trip-details",
       label: "Trip Details",
       path: "/trip/:id",
-      isProtected: false, 
+      component: <TripDetails />,
+      isProtected: false,
     },
     {
       key: "user-trips",
       label: "User Trips",
       path: "/user/:login",
+      component: <UserTrips />,
       isProtected: false,
     },
   ],
+  // Обработка несуществующих путей
+  notFound: {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
 };
 
 export const getRoutesConfig = () => {
@@ -80,6 +119,7 @@ export const getRoutesConfig = () => {
     public: NAVIGATION.public.filter((item) => item.path),
     private: NAVIGATION.private.filter((item) => item.path),
     dynamic: NAVIGATION.dynamic.filter((item) => item.path),
+    notFound: NAVIGATION.notFound,
   };
 };
 

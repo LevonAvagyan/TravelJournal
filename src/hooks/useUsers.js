@@ -11,6 +11,7 @@ export const useUser = create(
       registerVisible: false,
       loading: false,
       selectedUser: null,
+      allUsers: [],
 
       setLoginVisible: (visible) => set({ loginVisible: visible }),
       setRegisterVisible: (visible) => set({ registerVisible: visible }),
@@ -27,6 +28,7 @@ export const useUser = create(
             set({ user: userData, loginVisible: false });
             return userData;
           } else {
+            toast.error("Invalid login or password");
             return null;
           }
         } finally {
@@ -46,7 +48,6 @@ export const useUser = create(
           }
         } catch (error) {
           toast.error(error.message || "Registration failed");
-          console.error("Registration error:", error);
           return {
             error: true,
             message: error.message || "Registration failed",
@@ -56,31 +57,129 @@ export const useUser = create(
         }
       },
 
-      logout: () => {
-        set({ user: null });
-      },
+      logout: () => set({ user: null }),
 
       fetchUserById: async (userId) => {
         try {
           const data = await apiService.getUserByUserId(userId);
           set({ selectedUser: data });
           return data;
-        } catch (error) {
-          console.error("Fetch user by userId error:", error);
+        } catch {
           set({ selectedUser: null });
           return null;
         }
       },
+
       fetchUserByLogin: async (login) => {
         try {
           const data = await apiService.getUserByLogin(login);
           set({ selectedUser: data });
           return data;
-        } catch (error) {
-          console.error("Fetch user by login error:", error);
+        } catch {
           set({ selectedUser: null });
           return null;
         }
+      },
+
+      fetchAllUsers: async () => {
+        try {
+          const users = await apiService.getAllUsers();
+          set({ allUsers: users });
+          return users;
+        } catch {
+          set({ allUsers: [] });
+          return [];
+        }
+      },
+
+      updateUserAvatar: async (avatarUrl) => {
+        const { user } = get();
+        if (!user) {
+          toast.error("Please log in");
+          return;
+        }
+        set({ loading: true });
+        try {
+          const updatedUser = await apiService.updateUser(user.userId, {
+            avatar: avatarUrl,
+          });
+          set({
+            user: updatedUser,
+            avatarLastUpdated: Date.now(),
+          });
+          toast.success("Avatar updated! 📸");
+        } catch (err) {
+          toast.error("Failed to update avatar");
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      updateUserProfile: async (newLogin, newPassword) => {
+        const { user, allUsers } = get();
+        if (!user) {
+          toast.error("Please log in");
+          return false;
+        }
+
+        set({ loading: true });
+
+        try {
+          // Проверка валидности
+          const { valid, message } = apiService.validateCredentials(
+            newLogin,
+            newPassword
+          );
+          if (!valid) {
+            toast.error(message);
+            return false;
+          }
+
+          // Проверка уникальности логина
+          const loginExists = allUsers.some(
+            (u) =>
+              u.login.toLowerCase() === newLogin.toLowerCase() &&
+              u.userId !== user.userId
+          );
+          if (loginExists) {
+            toast.error("This login is already taken");
+            return false;
+          }
+
+          // Проверка на изменение
+          if (user.login === newLogin) {
+            toast.error("New login must be different from the current one");
+            return false;
+          }
+          if (user.password === newPassword) {
+            toast.error("New password must be different from the current one");
+            return false;
+          }
+
+          // Обновление пользователя
+          const updatedUser = await apiService.updateUser(user.userId, {
+            login: newLogin,
+            password: newPassword,
+          });
+          set({ user: updatedUser });
+          toast.success("Profile updated successfully!");
+          return true;
+        } catch (err) {
+          toast.error(
+            "Failed to update profile: " + (err.message || "Unknown error")
+          );
+          return false;
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      searchUsers: (query) => {
+        const { allUsers } = get();
+        if (!query) return allUsers;
+        return allUsers.filter((u) =>
+          u.login.toLowerCase().includes(query.toLowerCase())
+        );
       },
     }),
     {

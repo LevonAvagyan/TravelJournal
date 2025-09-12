@@ -27,6 +27,7 @@ export default function AuthForm() {
         open={loginVisible}
         onCancel={() => setLoginVisible(false)}
         footer={null}
+        destroyOnHidden
       >
         <Form
           layout="vertical"
@@ -84,6 +85,7 @@ export default function AuthForm() {
         open={registerVisible}
         onCancel={() => setRegisterVisible(false)}
         footer={null}
+        destroyOnHidden
       >
         <Form
           layout="vertical"

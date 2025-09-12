@@ -11,7 +11,8 @@ import {
   Tag,
   Image,
   Divider,
-  Avatar,
+  Flex,
+  Affix,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -20,6 +21,7 @@ import {
   EnvironmentOutlined,
   IdcardOutlined,
 } from "@ant-design/icons";
+import Avatar from "../components/Avatar";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -27,7 +29,6 @@ const TripDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentTrip, fetchTripById, tripLoading } = useTrips();
-
   const { user, selectedUser, fetchUserById } = useUser();
 
   useEffect(() => {
@@ -69,33 +70,28 @@ const TripDetails = () => {
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
-      <Button
-        icon={<ArrowLeftOutlined />}
-        onClick={() => navigate(-1)}
-        style={{ marginBottom: "20px" }}
-      >
-        Back
-      </Button>
-
+    <div
+      style={{
+        padding: "20px",
+        maxWidth: "900px",
+        margin: "0 auto",
+        position: "relative",
+        minHeight: "100vh",
+      }}
+    >
+      {/* Содержимое страницы */}
       <Card
-        variant="filled"
         style={{
           borderRadius: "12px",
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          overflow: "hidden",
         }}
       >
         {/* Заголовок */}
         <div style={{ marginBottom: "20px", textAlign: "center" }}>
-          <Title level={2} style={{ margin: 0 }}>
+          <Title level={2} style={{ margin: 0, color: "#1f1f1f" }}>
             {currentTrip.title}
           </Title>
-          <Text type="secondary" style={{ fontSize: "16px" }}>
-            <EnvironmentOutlined
-              style={{ marginRight: "6px", color: "#1890ff" }}
-            />
-            {currentTrip.location}
-          </Text>
         </div>
 
         {/* Картинка */}
@@ -131,46 +127,47 @@ const TripDetails = () => {
 
         {/* Основная информация */}
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <div>
-            <CalendarOutlined
-              style={{ marginRight: "8px", color: "#1890ff" }}
-            />
-            <Text strong>Date: </Text>
-            <Text>{currentTrip.date}</Text>
-          </div>
-
-          {/* Автор */}
-          <div>
-            <UserOutlined style={{ marginRight: "8px", color: "#1890ff" }} />
+          <Flex align="center" gap={8}>
+            <UserOutlined style={{ color: "#1890ff" }} />
             <Text strong>Author: </Text>
             {selectedUser ? (
-              <Space>
-                <Avatar>{selectedUser.login?.[0]?.toUpperCase()}</Avatar>
-                <Text>{selectedUser.login}</Text>
+              <Flex align="center" gap={8}>
+                <Avatar user={selectedUser} />
                 <Button
                   type="link"
-                  onClick={() => navigate(`/user/${selectedUser.login}`)} // ✅ теперь по login
+                  onClick={() =>
+                    user?.login === selectedUser?.login
+                      ? navigate("/my-journal")
+                      : navigate(`/user/${selectedUser.login}`)
+                  }
                   style={{ padding: 0 }}
                 >
-                  View Profile
+                  {selectedUser.login}
                 </Button>
-              </Space>
+                {user?.login === selectedUser?.login && (
+                  <Flex>
+                    <Tag color="green" style={{ marginLeft: "8px" }}>
+                      You
+                    </Tag>
+                  </Flex>
+                )}
+              </Flex>
             ) : (
               <Tag color="blue">User {currentTrip.userId}</Tag>
             )}
+          </Flex>
 
-            {user?.login === selectedUser?.login && ( // ✅ сверяем логины
-              <Tag color="green" style={{ marginLeft: "8px" }}>
-                You
-              </Tag>
-            )}
-          </div>
+          <Flex align="center" gap={8}>
+            <CalendarOutlined style={{ color: "#1890ff" }} />
+            <Text strong>Date: </Text>
+            <Text>{currentTrip.date}</Text>
+          </Flex>
 
-          <div>
-            <IdcardOutlined style={{ marginRight: "8px", color: "#1890ff" }} />
-            <Text strong>Trip ID: </Text>
-            <Text>{currentTrip.id}</Text>
-          </div>
+          <Flex align="center" gap={8}>
+            <EnvironmentOutlined style={{ color: "#1890ff" }} />
+            <Text strong>Location: </Text>
+            <Text style={{ fontSize: "16px" }}>{currentTrip.location}</Text>
+          </Flex>
         </Space>
 
         {/* Описание */}
@@ -184,6 +181,34 @@ const TripDetails = () => {
           </>
         )}
       </Card>
+
+      {/* Закреплённая кнопка Back */}
+      <Affix
+        style={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          zIndex: 1000,
+        }}
+      >
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(-1)}
+          style={{
+            borderRadius: 8,
+            background: "#1677ff",
+            color: "#fff",
+            border: "none",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              background: "#0958d9",
+              transform: "scale(1.05)",
+            },
+          }}
+        >
+          Back
+        </Button>
+      </Affix>
     </div>
   );
 };

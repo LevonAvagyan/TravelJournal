@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, theme, Spin, Typography, Button } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Layout, Menu, theme, Spin, Typography, Button, Divider } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../hooks/useUsers";
-import AuthForm from "./AuthForm";
-import AddTripModal from "./AddTrip";
+import AuthForm from "../modal/AuthForm";
+import AddTripModal from "../modal/AddTrip";
 import { getMenuItems } from "../config/navigation";
+import Avatar from "./Avatar";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Text } = Typography;
@@ -19,7 +19,7 @@ export default function StandartPage({ children }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Добавляем useLocation для отслеживания текущего пути
+  const location = useLocation();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -32,8 +32,6 @@ export default function StandartPage({ children }) {
     return () => clearTimeout(timer);
   }, []);
 
-
-
   const handleCollapse = (collapsed) => {
     setIsTransitioning(true);
     setCollapsed(collapsed);
@@ -43,7 +41,6 @@ export default function StandartPage({ children }) {
     }, 300);
   };
 
-  
   const openAddTrip = () => setAddTripVisible(true);
   const closeAddTrip = () => setAddTripVisible(false);
 
@@ -57,7 +54,35 @@ export default function StandartPage({ children }) {
     },
   };
 
-  const menu_items = getMenuItems(user, handlers);
+  const menuItems = getMenuItems(user, handlers);
+
+  const publicItems = menuItems
+    .filter((item) => ["home", "explore", "users"].includes(item.key))
+    .map((item) => ({
+      key: item.key,
+      icon: item.icon,
+      label: item.label,
+      onClick: item.onClick,
+    }));
+  const privateItems = menuItems
+    .filter((item) => !["home", "explore", "users"].includes(item.key))
+    .map((item) => ({
+      key: item.key,
+      icon: item.icon,
+      label: item.label,
+      onClick: item.onClick,
+    }));
+
+  const getSelectedKey = () => {
+    const path = location.pathname;
+    if (path === "/") {
+      return ["home"];
+    }
+    const item = menuItems.find(
+      (item) => path === `/${item.key}` || path.startsWith(`/${item.key}/`)
+    );
+    return item ? [item.key] : [];
+  };
 
   if (!isInitialized) {
     return (
@@ -90,6 +115,7 @@ export default function StandartPage({ children }) {
           overflow: "hidden auto",
           transition: "all 0.3s cubic-bezier(0.2, 0, 0, 1)",
           boxShadow: "2px 0 8px rgba(0, 0, 0, 0.15)",
+          background: "linear-gradient(180deg, #001529 0%, #002140 100%)",
         }}
         width={200}
         collapsedWidth={80}
@@ -122,13 +148,28 @@ export default function StandartPage({ children }) {
         <Menu
           theme="dark"
           mode="inline"
-          items={menu_items}
           style={{
             borderRight: 0,
             background: "transparent",
             transition: "all 0.3s ease",
           }}
           inlineCollapsed={collapsed}
+          selectedKeys={getSelectedKey()} // Устанавливаем выбранный ключ
+          items={[
+            {
+              type: "group",
+              label: collapsed ? "" : "Navigation",
+              children: publicItems,
+            },
+            {
+              type: "divider",
+            },
+            {
+              type: "group",
+              label: collapsed ? "" : "Your Actions",
+              children: privateItems,
+            },
+          ]}
         />
       </Sider>
 
@@ -156,7 +197,7 @@ export default function StandartPage({ children }) {
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
-             <h2
+            <h2
               style={{
                 margin: 0,
                 fontSize: 20,
@@ -173,9 +214,12 @@ export default function StandartPage({ children }) {
 
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {user && (
-              <Text style={{ color: "#666", fontSize: 14 }}>
-                Welcome, <b style={{ color: "#1890ff" }}>{user.login}</b>!
-              </Text>
+              <>
+                <Text style={{ color: "#666", fontSize: 14 }}>
+                  <Avatar user={user} size={32} style={{ margin: "0" }} />{" "}
+                  <b style={{ color: "#1890ff" }}>{user.login}</b>
+                </Text>
+              </>
             )}
             <AuthForm />
           </div>
@@ -238,6 +282,12 @@ export default function StandartPage({ children }) {
           
           .ant-menu-item:hover {
             transform: translateX(2px);
+          }
+          
+          .ant-menu-item-selected {
+            background-color: #1890ff !important; /* Подсветка выбранного элемента */
+            color: #fff !important;
+            border-radius: 4px;
           }
           
           .ant-btn-text:not(:disabled):hover {

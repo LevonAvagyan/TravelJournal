@@ -2,9 +2,9 @@ import axios from "axios";
 
 class ApiService {
   constructor() {
-    this.MAIN_URL = "https://68a0546c6e38a02c58186395.mockapi.io/travel";
-    this.TRIPS_URL = `${this.MAIN_URL}/trips`;
-    this.USERS_URL = `${this.MAIN_URL}/users`;
+    this.MAIN_URL = import.meta.env.VITE_API_BASE_URL;
+    this.TRIPS_URL = import.meta.env.VITE_API_TRIPS_URL;
+    this.USERS_URL = import.meta.env.VITE_API_USERS_URL;
   }
 
   // ================== USERS ==================
@@ -79,6 +79,28 @@ class ApiService {
     }
   }
 
+  async updateUser(userId, updates) {
+        try {
+      const res = await axios.get(this.USERS_URL); 
+      const allUsers = res.data;
+      const userIndex = allUsers.findIndex(
+        (u) => Number(u.userId) === Number(userId)
+      );
+      if (userIndex === -1) throw new Error("User not found");
+
+      const updatedUser = { ...allUsers[userIndex], ...updates };
+      const putRes = await axios.put(
+        `${this.USERS_URL}/${allUsers[userIndex].id}`,
+        updatedUser
+      ); // MockAPI использует .id для PUT
+      console.log("User updated:", putRes.data);
+      return putRes.data;
+    } catch (error) {
+      console.error("Update user error:", error);
+      throw error;
+    }
+  }
+
   async getUserByUserId(userId) {
     try {
       const res = await axios.get(this.USERS_URL);
@@ -104,6 +126,15 @@ class ApiService {
     } catch (error) {
       console.error("Get user by login error:", error);
       throw error;
+    }
+  }
+  async getAllUsers() {
+    try {
+      const res = await axios.get(this.USERS_URL);
+      return res.data || [];
+    } catch (error) {
+      console.error("Get all users error:", error);
+      return [];
     }
   }
 
