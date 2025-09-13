@@ -37,30 +37,6 @@ export default function MyJournal() {
         Welcome back, <b>{user?.login}</b>!
       </Text>
 
-      <div style={{ textAlign: "center", marginBottom: 20 }}>
-        <Button
-          icon={<SettingOutlined />}
-          type={settingsMode ? "default" : "primary"}
-          onClick={() => setSettingsMode(!settingsMode)}
-          style={{
-            borderRadius: 8,
-            padding: "0 20px",
-            height: 40,
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            transition: "all 0.3s ease",
-            background: settingsMode ? "#fff" : "#1677ff",
-            border: settingsMode ? "1px solid #d9d9d9" : "none",
-            color: settingsMode ? "#000" : "#fff",
-            "&:hover": {
-              background: settingsMode ? "#f0f0f0" : "#0958d9",
-              transform: "scale(1.05)",
-            },
-          }}
-        >
-          {settingsMode ? "Exit Settings" : "Settings Mode"}
-        </Button>
-      </div>
-
       {handleLoading ? (
         <div
           style={{ display: "flex", justifyContent: "center", marginTop: 50 }}
@@ -90,11 +66,37 @@ export default function MyJournal() {
           <AddTripModal open={addTripVisible} onClose={closeAddTripModal} />
         </Flex>
       ) : (
-        <Flex wrap="wrap" gap={16} justify="center">
-          {userTrips.map((trip) => (
-            <CardComp key={trip.id} trip={trip} settingsMode={settingsMode} />
-          ))}
-        </Flex>
+        <>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <Button
+              icon={<SettingOutlined />}
+              type={settingsMode ? "default" : "primary"}
+              onClick={() => setSettingsMode(!settingsMode)}
+              style={{
+                borderRadius: 8,
+                padding: "0 20px",
+                height: 40,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                transition: "all 0.3s ease",
+                background: settingsMode ? "#fff" : "#1677ff",
+                border: settingsMode ? "1px solid #d9d9d9" : "none",
+                color: settingsMode ? "#000" : "#fff",
+                "&:hover": {
+                  background: settingsMode ? "#f0f0f0" : "#0958d9",
+                  transform: "scale(1.05)",
+                },
+              }}
+            >
+              {settingsMode ? "Exit Settings" : "Settings Mode"}
+            </Button>
+          </div>
+
+          <Flex wrap="wrap" gap={16} justify="center">
+            {userTrips.map((trip) => (
+              <CardComp key={trip.id} trip={trip} settingsMode={settingsMode} />
+            ))}
+          </Flex>
+        </>
       )}
     </div>
   );
