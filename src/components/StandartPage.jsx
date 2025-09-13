@@ -154,7 +154,7 @@ export default function StandartPage({ children }) {
             transition: "all 0.3s ease",
           }}
           inlineCollapsed={collapsed}
-          selectedKeys={getSelectedKey()} // Устанавливаем выбранный ключ
+          selectedKeys={getSelectedKey()} 
           items={[
             {
               type: "group",

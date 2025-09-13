@@ -11,7 +11,7 @@ import {
 import { Navigate } from "react-router-dom";
 import React from "react";
 
-// Ленивая загрузка компонентов
+
 const Home = React.lazy(() => import("../pages/Home"));
 const Explore = React.lazy(() => import("../pages/Explore"));
 const MyJournal = React.lazy(() => import("../pages/MyJournal"));
@@ -107,7 +107,6 @@ export const NAVIGATION = {
       isProtected: false,
     },
   ],
-  // Обработка несуществующих путей
   notFound: {
     path: "*",
     element: <Navigate to="/" replace />,

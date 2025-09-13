@@ -26,7 +26,7 @@ export default function SettingsPage() {
     const { newLogin, newPassword } = values;
     const success = await updateUserProfile(newLogin, newPassword);
     if (success) {
-      await fetchAllUsers(); // Обновляем список пользователей
+      await fetchAllUsers(); 
       form.resetFields();
     }
   };

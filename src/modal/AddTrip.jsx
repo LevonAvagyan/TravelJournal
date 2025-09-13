@@ -4,7 +4,6 @@ import { Modal, Form, Input, DatePicker, Button } from "antd";
 import { useTrips } from "../hooks/useTrips";
 import { useUser } from "../hooks/useUsers";
 import dayjs from "dayjs";
-import toast from "react-hot-toast";
 
 export default function AddTripModal({ open, onClose }) {
   const user = useUser((state) => state.user);

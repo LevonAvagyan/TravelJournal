@@ -52,7 +52,7 @@ const UserTrips = () => {
         minHeight: "80vh",
         background: "#f9fafb",
         width: "100%",
-        position: "relative", // Для работы Affix
+        position: "relative", 
       }}
     >
       {/* Верхняя панель с информацией о пользователе */}

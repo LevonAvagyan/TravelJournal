@@ -92,7 +92,7 @@ class ApiService {
       const putRes = await axios.put(
         `${this.USERS_URL}/${allUsers[userIndex].id}`,
         updatedUser
-      ); // MockAPI использует .id для PUT
+      ); 
       console.log("User updated:", putRes.data);
       return putRes.data;
     } catch (error) {

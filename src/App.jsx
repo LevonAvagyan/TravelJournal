@@ -9,12 +9,11 @@ import StandartPage from "./components/StandartPage";
 import { useUser } from "./hooks/useUsers";
 import { getRoutesConfig } from "./config/navigation";
 import { Spin } from "antd";
-import { useState, useEffect } from "react";
 import DesignedToaster from "./components/DesignedToaster";
 
 const App = () => {
   const { user } = useUser((state) => state);
-    const {
+  const {
     public: publicRoutes,
     private: privateRoutes,
     dynamic,
@@ -25,7 +24,7 @@ const App = () => {
     <Router>
       <StandartPage>
         <DesignedToaster />
-        <Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>
+        <Suspense fallback={<Spin size="big" tip="Loading..." />}>
           <Routes>
             {/* Публичные маршруты */}
             {publicRoutes.map((route) => (

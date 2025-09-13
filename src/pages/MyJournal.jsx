@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTrips } from "../hooks/useTrips";
 import { useUser } from "../hooks/useUsers";
 import { Typography, Spin, Button, Flex, Empty } from "antd";
-import { SettingOutlined } from "@ant-design/icons"; // Добавляем иконку для кнопки
+import { SettingOutlined } from "@ant-design/icons";
 import AddTripModal from "../modal/AddTrip";
 import CardComp from "../components/CardComp";
 
@@ -73,12 +73,11 @@ export default function MyJournal() {
       ) : userTrips.length === 0 ? (
         <Flex justify="center" style={{ marginTop: 50 }}>
           <Empty
-            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" // Стандартная иконка Empty
-            imageStyle={{ height: 100 }}
+            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
             description={
               <Text type="secondary">
                 <Title level={4} style={{ color: "#8c8c8c" }}>
-                  📝 No trips yet
+                  No trips yet
                 </Title>
                 Start your travel journey by adding your first trip!
               </Text>

@@ -17,7 +17,7 @@ const ImageUpload = ({ value, onChange }) => {
     } finally {
       setLoading(false);
     }
-    return false; // Prevent default upload
+    return false; 
   };
 
   return (

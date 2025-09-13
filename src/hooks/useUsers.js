@@ -125,7 +125,7 @@ export const useUser = create(
         set({ loading: true });
 
         try {
-          // Проверка валидности
+          
           const { valid, message } = apiService.validateCredentials(
             newLogin,
             newPassword
@@ -135,7 +135,6 @@ export const useUser = create(
             return false;
           }
 
-          // Проверка уникальности логина
           const loginExists = allUsers.some(
             (u) =>
               u.login.toLowerCase() === newLogin.toLowerCase() &&
@@ -146,7 +145,6 @@ export const useUser = create(
             return false;
           }
 
-          // Проверка на изменение
           if (user.login === newLogin) {
             toast.error("New login must be different from the current one");
             return false;
@@ -156,7 +154,7 @@ export const useUser = create(
             return false;
           }
 
-          // Обновление пользователя
+          
           const updatedUser = await apiService.updateUser(user.userId, {
             login: newLogin,
             password: newPassword,
